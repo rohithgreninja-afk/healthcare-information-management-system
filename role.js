@@ -1,12 +1,1 @@
-// =============================================
-// role.js — role.html
-// =============================================
-
-var roleCards = document.querySelectorAll('.role-card');
-
-for (var i = 0; i < roleCards.length; i++) {
-  roleCards[i].addEventListener('click', function() {
-    var roleName = this.querySelector('h2').textContent;
-    sessionStorage.setItem('selectedRole', roleName);
-  });
-}
+document.querySelectorAll('.role-card').forEach(card=>card.addEventListener('click',event=>{event.preventDefault();const role=card.querySelector('h2').textContent.trim().toLowerCase();location.href=`signup.html?role=${encodeURIComponent(role)}`;}));

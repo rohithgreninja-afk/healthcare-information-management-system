@@ -14,13 +14,14 @@
     <div class="navbar-brand">HIMS — Patient</div>
     <div class="navbar-links">
       <button id="reset-btn" class="nav-btn nav-btn-reset">Reset Data</button>
+      <button id="logout-btn" class="nav-btn">Sign out</button>
       <a href="role.html"  class="nav-btn">Switch Role</a>
       <a href="index.html" class="nav-btn">Home</a>
     </div>
   </nav>
 
   <main class="main-content">
-    <h1 class="module-title">Patient Dashboard</h1>
+    <h1 class="module-title" id="patient-dashboard-title">Patient Dashboard</h1>
 
     <div class="tab-bar">
       <button class="tab-btn" data-tab="personal-info" style="color:#0066cc; border-bottom:3px solid #0066cc; font-weight:bold;">Personal Info</button>
@@ -118,7 +119,7 @@
         <thead>
           <tr><th>Date</th><th>Time</th><th>Doctor</th><th>Reason</th><th>Complaints / Symptoms</th><th>Status</th></tr>
         </thead>
-        <tbody>
+        <tbody id="past-tbody">
           <tr><td>20 Feb 2026</td><td>10:00 AM</td><td>Dr. Lee</td><td>Consultation</td><td>Headache, high BP</td><td>Completed</td></tr>
           <tr><td>10 Jan 2026</td><td>02:00 PM</td><td>Dr. Khan</td><td>Check-up</td><td>Routine check</td><td>Completed</td></tr>
         </tbody>
@@ -155,7 +156,7 @@
         <thead>
           <tr><th>Date</th><th>Test</th><th>Result</th><th>Normal Range</th><th>Status</th></tr>
         </thead>
-        <tbody>
+        <tbody id="lab-results-tbody">
           <tr><td>18 Feb 2026</td><td>Blood Pressure</td><td>145/95 mmHg</td><td>120/80 mmHg</td><td>High</td></tr>
           <tr><td>18 Feb 2026</td><td>Blood Sugar (Fasting)</td><td>98 mg/dL</td><td>70-100 mg/dL</td><td>Normal</td></tr>
         </tbody>
@@ -176,6 +177,8 @@
 
   </main>
 
+  <script src="auth-guard.js" data-role="patient"></script>
+  <script src="api.js"></script>
   <script src="patient.js"></script>
   <script src="reset.js"></script>
 

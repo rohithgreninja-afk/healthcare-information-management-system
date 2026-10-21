@@ -1,0 +1,67 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS doctors (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, specialty TEXT NOT NULL,
+  department TEXT NOT NULL, phone TEXT NOT NULL, email TEXT, whatsapp_opt_in INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS patients (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, age INTEGER NOT NULL CHECK(age BETWEEN 0 AND 130),
+  gender TEXT NOT NULL, blood TEXT NOT NULL, phone TEXT NOT NULL,
+  doctor_id TEXT REFERENCES doctors(id) ON DELETE SET NULL,
+  dob TEXT, email TEXT, address TEXT, emergency_contact TEXT,
+  whatsapp_opt_in INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS invoices (
+  id TEXT PRIMARY KEY, patient_id TEXT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  date TEXT NOT NULL, description TEXT NOT NULL, amount REAL NOT NULL CHECK(amount >= 0),
+  status TEXT NOT NULL DEFAULT 'Unpaid' CHECK(status IN ('Paid','Unpaid'))
+);
+CREATE TABLE IF NOT EXISTS appointments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id TEXT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  doctor_id TEXT NOT NULL REFERENCES doctors(id), date TEXT NOT NULL, time TEXT NOT NULL,
+  reason TEXT NOT NULL, symptoms TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Pending' CHECK(status IN ('Pending','Confirmed','Completed'))
+);
+CREATE TABLE IF NOT EXISTS diagnoses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id TEXT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  doctor_id TEXT REFERENCES doctors(id) ON DELETE SET NULL, date TEXT NOT NULL,
+  diagnosis TEXT NOT NULL, notes TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS prescriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id TEXT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  doctor_id TEXT REFERENCES doctors(id) ON DELETE SET NULL, date TEXT NOT NULL,
+  medicine TEXT NOT NULL, dosage TEXT NOT NULL, duration TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS lab_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id TEXT NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  date TEXT NOT NULL, test TEXT NOT NULL, result TEXT NOT NULL, normal_range TEXT NOT NULL, status TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL,
+  message TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  phone TEXT UNIQUE,
+  email TEXT,
+  email_opt_in INTEGER NOT NULL DEFAULT 0,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL CHECK(role IN ('admin','doctor','patient')),
+  patient_id TEXT UNIQUE REFERENCES patients(id) ON DELETE CASCADE,
+  doctor_id TEXT UNIQUE REFERENCES doctors(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS sessions (
+  token_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS notification_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  appointment_id INTEGER,
+  recipient_role TEXT NOT NULL,
+  notification_type TEXT NOT NULL,
+  status TEXT NOT NULL,
+  provider_message_id TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
